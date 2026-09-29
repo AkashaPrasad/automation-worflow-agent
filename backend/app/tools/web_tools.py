@@ -35,6 +35,38 @@ def _default_resolver(host: str) -> list[str]:
     return sorted({ai[4][0] for ai in socket.getaddrinfo(host, None, proto=socket.IPPROTO_TCP)})
 
 
+# Fictional companies in the Acme Robotics sandbox have no real websites. Their pages are
+# served from these fixtures (clearly marked source="sandbox") so research demos are
+# deterministic; every other host is fetched live with the SSRF guard.
+SANDBOX_SITES: dict[str, dict[str, str]] = {
+    "globex.com": {
+        "title": "Globex Industrial Supply | Precision components for robotics",
+        "text": "Globex Industrial Supply manufactures harmonic drives, precision bearings and servo "
+                "lubricants for industrial and warehouse robotics. Standard lead time: 6-8 weeks; "
+                "expedited 3 weeks at +12%. Volume tiers: 5% off above 200 units/quarter, 8% above 500. "
+                "Support: 24x5 ticketing, 4-hour response for Priority accounts. Certifications: ISO 9001, "
+                "ISO 14001. Recent news: new Pune distribution centre (Q3), lubricant formulation update "
+                "LX-7 replacing LX-5 from October.",
+    },
+    "initech.com": {
+        "title": "Initech Motion | Drives and gearboxes",
+        "text": "Initech Motion supplies planetary gearboxes and harmonic drives. Lead time 4-5 weeks. "
+                "Pricing roughly 7% above Globex list for comparable harmonic drives; 10% off above 300 "
+                "units/quarter. Support: business-hours email only. ISO 9001.",
+    },
+    "starkindustries.com": {
+        "title": "Stark Industries Components",
+        "text": "Stark Industries Components offers premium actuators with 2-week lead times and a 3-year "
+                "warranty. List prices ~18% above market; minimum order 100 units. 24x7 support.",
+    },
+}
+
+
+def _sandbox_page(host: str) -> dict[str, str] | None:
+    host = host.lower().removeprefix("www.")
+    return SANDBOX_SITES.get(host)
+
+
 class WebFetch(BaseTool):
     spec = ToolSpec(
         name="web.fetch", app="web", title="Fetch web page",
@@ -68,6 +100,10 @@ class WebFetch(BaseTool):
 
     async def execute(self, args: dict[str, Any], ctx: ToolContext) -> ToolResult:
         url = args["url"].strip()
+        page = _sandbox_page(urlparse(url).hostname or "")
+        if page is not None:
+            return ok({"url": url, "title": page["title"], "text": page["text"], "status": 200,
+                       "truncated": False, "source": "sandbox"})
         async with httpx.AsyncClient(timeout=10.0, follow_redirects=False, transport=self._transport,
                                      headers={"User-Agent": "AdjutantBot/0.1 (+https://aiml.spacesdrive.cc)"}) as client:
             for _ in range(MAX_REDIRECTS + 1):
