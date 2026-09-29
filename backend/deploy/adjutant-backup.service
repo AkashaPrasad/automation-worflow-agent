@@ -1,0 +1,9 @@
+[Unit]
+Description=Adjutant SQLite backup
+
+[Service]
+Type=oneshot
+User=adjutant
+Group=adjutant
+Environment=DATABASE_PATH=/var/lib/adjutant/adjutant.db
+ExecStart=/usr/local/bin/adjutant-backup

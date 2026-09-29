@@ -1,0 +1,477 @@
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "@xyflow/react/dist/base.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ---------------------------------------------------------------------------
+   Tokens. Graphite neutrals, one indigo accent (Muse), and a fixed semantic
+   vocabulary that means the same thing on every screen:
+   auto=green  ask=amber  block=red  run=blue  shadow=violet  undo=teal  taint=hazard orange
+   --------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+  --bg: oklch(0.982 0.003 255);
+  --panel: oklch(1 0 0);
+  --panel-2: oklch(0.968 0.004 255);
+  --panel-3: oklch(0.946 0.005 255);
+  --line: oklch(0.918 0.005 255);
+  --line-strong: oklch(0.862 0.007 255);
+  --ink: oklch(0.205 0.012 262);
+  --ink-2: oklch(0.415 0.013 262);
+  --ink-3: oklch(0.515 0.012 262);
+  --ink-4: oklch(0.66 0.01 262);
+  --accent: oklch(0.53 0.2 272);
+  --accent-ink: oklch(0.99 0 0);
+  --accent-soft: oklch(0.955 0.028 272);
+  --accent-line: oklch(0.82 0.08 272);
+  --inverse: oklch(0.205 0.012 262);
+  --inverse-ink: oklch(0.985 0.002 255);
+
+  --auto-fg: oklch(0.47 0.12 155);
+  --auto-bg: oklch(0.962 0.038 155);
+  --auto-line: oklch(0.85 0.08 155);
+  --auto-solid: oklch(0.63 0.15 155);
+
+  --ask-fg: oklch(0.5 0.12 62);
+  --ask-bg: oklch(0.968 0.05 88);
+  --ask-line: oklch(0.85 0.1 80);
+  --ask-solid: oklch(0.77 0.16 74);
+
+  --block-fg: oklch(0.52 0.19 25);
+  --block-bg: oklch(0.962 0.028 22);
+  --block-line: oklch(0.84 0.08 22);
+  --block-solid: oklch(0.6 0.2 25);
+
+  --run-fg: oklch(0.5 0.17 256);
+  --run-bg: oklch(0.96 0.03 256);
+  --run-line: oklch(0.84 0.07 256);
+  --run-solid: oklch(0.6 0.18 256);
+
+  --shadow-fg: oklch(0.5 0.17 298);
+  --shadow-bg: oklch(0.962 0.028 298);
+  --shadow-line: oklch(0.8 0.1 298);
+  --shadow-solid: oklch(0.6 0.18 298);
+
+  --undo-fg: oklch(0.49 0.085 205);
+  --undo-bg: oklch(0.96 0.024 205);
+  --undo-line: oklch(0.84 0.05 205);
+  --undo-solid: oklch(0.62 0.1 205);
+
+  --taint-fg: oklch(0.5 0.15 45);
+  --taint-bg: oklch(0.965 0.045 70);
+  --taint-line: oklch(0.78 0.13 58);
+  --taint-solid: oklch(0.74 0.17 60);
+
+  --neutral-fg: var(--ink-2);
+  --neutral-bg: var(--panel-2);
+  --neutral-line: var(--line-strong);
+  --neutral-solid: oklch(0.72 0.012 262);
+
+  --agent-planner: oklch(0.55 0.19 282);
+  --agent-executor: oklch(0.56 0.13 232);
+  --agent-evaluator: oklch(0.56 0.11 172);
+  --agent-guardian: oklch(0.57 0.18 350);
+  --agent-system: oklch(0.6 0.012 262);
+
+  --elev-pop: 0 1px 2px oklch(0.2 0.02 262 / 0.05), 0 10px 30px -8px oklch(0.2 0.03 262 / 0.18);
+  --elev-card: 0 1px 2px oklch(0.2 0.02 262 / 0.05);
+  --elev-drawer: -12px 0 40px -12px oklch(0.2 0.03 262 / 0.22);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: oklch(0.158 0.006 262);
+  --panel: oklch(0.192 0.007 262);
+  --panel-2: oklch(0.172 0.006 262);
+  --panel-3: oklch(0.232 0.008 262);
+  --line: oklch(0.27 0.008 262);
+  --line-strong: oklch(0.345 0.01 262);
+  --ink: oklch(0.955 0.004 262);
+  --ink-2: oklch(0.79 0.01 262);
+  --ink-3: oklch(0.68 0.012 262);
+  --ink-4: oklch(0.52 0.012 262);
+  --accent: oklch(0.74 0.14 275);
+  --accent-ink: oklch(0.17 0.02 275);
+  --accent-soft: oklch(0.28 0.06 275);
+  --accent-line: oklch(0.46 0.11 275);
+  --inverse: oklch(0.955 0.004 262);
+  --inverse-ink: oklch(0.17 0.006 262);
+
+  --auto-fg: oklch(0.8 0.14 155);
+  --auto-bg: oklch(0.255 0.045 155);
+  --auto-line: oklch(0.42 0.08 155);
+  --auto-solid: oklch(0.72 0.16 155);
+
+  --ask-fg: oklch(0.86 0.13 82);
+  --ask-bg: oklch(0.27 0.05 75);
+  --ask-line: oklch(0.47 0.09 75);
+  --ask-solid: oklch(0.8 0.15 78);
+
+  --block-fg: oklch(0.77 0.15 24);
+  --block-bg: oklch(0.265 0.06 24);
+  --block-line: oklch(0.45 0.11 24);
+  --block-solid: oklch(0.67 0.19 25);
+
+  --run-fg: oklch(0.79 0.12 256);
+  --run-bg: oklch(0.265 0.06 258);
+  --run-line: oklch(0.44 0.1 258);
+  --run-solid: oklch(0.69 0.16 256);
+
+  --shadow-fg: oklch(0.8 0.12 298);
+  --shadow-bg: oklch(0.265 0.06 298);
+  --shadow-line: oklch(0.46 0.11 298);
+  --shadow-solid: oklch(0.69 0.16 298);
+
+  --undo-fg: oklch(0.81 0.08 205);
+  --undo-bg: oklch(0.26 0.035 205);
+  --undo-line: oklch(0.43 0.06 205);
+  --undo-solid: oklch(0.71 0.1 205);
+
+  --taint-fg: oklch(0.84 0.13 65);
+  --taint-bg: oklch(0.27 0.05 58);
+  --taint-line: oklch(0.52 0.11 58);
+  --taint-solid: oklch(0.75 0.16 60);
+
+  --neutral-solid: oklch(0.58 0.012 262);
+
+  --agent-planner: oklch(0.74 0.14 285);
+  --agent-executor: oklch(0.75 0.1 232);
+  --agent-evaluator: oklch(0.77 0.11 172);
+  --agent-guardian: oklch(0.75 0.14 350);
+  --agent-system: oklch(0.62 0.012 262);
+
+  --elev-pop: 0 1px 2px oklch(0 0 0 / 0.3), 0 12px 32px -8px oklch(0 0 0 / 0.55);
+  --elev-card: 0 1px 2px oklch(0 0 0 / 0.25);
+  --elev-drawer: -16px 0 48px -12px oklch(0 0 0 / 0.6);
+}
+
+@theme inline {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.05rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.4rem;
+  --text-md: 0.9375rem;
+  --text-md--line-height: 1.5rem;
+
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-panel-3: var(--panel-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+  --color-inverse: var(--inverse);
+  --color-inverse-ink: var(--inverse-ink);
+
+  --color-auto-fg: var(--auto-fg);
+  --color-auto-bg: var(--auto-bg);
+  --color-auto-line: var(--auto-line);
+  --color-auto-solid: var(--auto-solid);
+  --color-ask-fg: var(--ask-fg);
+  --color-ask-bg: var(--ask-bg);
+  --color-ask-line: var(--ask-line);
+  --color-ask-solid: var(--ask-solid);
+  --color-block-fg: var(--block-fg);
+  --color-block-bg: var(--block-bg);
+  --color-block-line: var(--block-line);
+  --color-block-solid: var(--block-solid);
+  --color-run-fg: var(--run-fg);
+  --color-run-bg: var(--run-bg);
+  --color-run-line: var(--run-line);
+  --color-run-solid: var(--run-solid);
+  --color-shadow-fg: var(--shadow-fg);
+  --color-shadow-bg: var(--shadow-bg);
+  --color-shadow-line: var(--shadow-line);
+  --color-shadow-solid: var(--shadow-solid);
+  --color-undo-fg: var(--undo-fg);
+  --color-undo-bg: var(--undo-bg);
+  --color-undo-line: var(--undo-line);
+  --color-undo-solid: var(--undo-solid);
+  --color-taint-fg: var(--taint-fg);
+  --color-taint-bg: var(--taint-bg);
+  --color-taint-line: var(--taint-line);
+  --color-taint-solid: var(--taint-solid);
+  --color-neutral-fg: var(--neutral-fg);
+  --color-neutral-bg: var(--neutral-bg);
+  --color-neutral-line: var(--neutral-line);
+  --color-neutral-solid: var(--neutral-solid);
+
+  --color-agent-planner: var(--agent-planner);
+  --color-agent-executor: var(--agent-executor);
+  --color-agent-evaluator: var(--agent-evaluator);
+  --color-agent-guardian: var(--agent-guardian);
+  --color-agent-system: var(--agent-system);
+
+  --shadow-pop: var(--elev-pop);
+  --shadow-card: var(--elev-card);
+  --shadow-drawer: var(--elev-drawer);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--bg);
+  }
+  body {
+    @apply bg-bg text-ink font-sans text-base;
+    font-feature-settings: "ss01", "cv11";
+    min-height: 100dvh;
+    caret-color: var(--accent);
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--accent) 24%, transparent);
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  button, [role="button"], a, select, summary {
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+    letter-spacing: -0.012em;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  a {
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--font-mono);
+  }
+  input::placeholder, textarea::placeholder {
+    color: var(--ink-3);
+    opacity: 1;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  select {
+    background-image: none;
+  }
+}
+
+@layer utilities {
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  /* Hazard stripes: the one marker for content that came from outside the user's control. */
+  .taint-stripes {
+    background-color: var(--taint-bg);
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in oklch, var(--taint-solid) 34%, transparent) 0 4px,
+      transparent 4px 8px
+    );
+  }
+  .taint-edge {
+    background-image: repeating-linear-gradient(-45deg, var(--taint-solid) 0 4px, transparent 4px 8px);
+  }
+  .grid-dots {
+    background-image: radial-gradient(circle at 1px 1px, color-mix(in oklch, var(--ink-4) 45%, transparent) 1px, transparent 0);
+    background-size: 18px 18px;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion. State changes only; everything is visible without it.
+   --------------------------------------------------------------------------- */
+@keyframes live-ring {
+  0% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--run-solid) 55%, transparent); }
+  80%, 100% { box-shadow: 0 0 0 6px color-mix(in oklch, var(--run-solid) 0%, transparent); }
+}
+@keyframes sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes drawer-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+@keyframes stamp {
+  0% { opacity: 0; transform: scale(1.35); filter: blur(2px); }
+  60% { opacity: 1; transform: scale(0.96); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes flow-dash {
+  to { stroke-dashoffset: -16; }
+}
+
+.live-dot {
+  animation: live-ring 1.6s var(--ease-out-quart) infinite;
+}
+.live-sweep {
+  animation: sweep 1.4s var(--ease-out-quart) infinite;
+}
+.animate-rise {
+  animation: rise 240ms var(--ease-out-expo) both;
+}
+.animate-drawer {
+  animation: drawer-in 260ms var(--ease-out-expo) both;
+}
+.animate-fade {
+  animation: fade-in 180ms ease-out both;
+}
+.animate-grow-x {
+  transform-origin: left center;
+  animation: grow-x 900ms var(--ease-out-expo) both;
+}
+.animate-stamp {
+  animation: stamp 520ms var(--ease-out-expo) both;
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--panel-2) 0px, var(--panel-3) 120px, var(--panel-2) 240px);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  .live-dot { animation: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--run-solid) 35%, transparent); }
+  .live-sweep { animation: none; opacity: 0; }
+}
+
+/* ---------------------------------------------------------------------------
+   React Flow, themed from tokens
+   --------------------------------------------------------------------------- */
+.react-flow {
+  --xy-background-color: transparent;
+  --xy-edge-stroke: var(--line-strong);
+  --xy-edge-stroke-width: 1.25;
+  --xy-edge-stroke-selected: var(--accent);
+  --xy-node-border-radius: 8px;
+  --xy-minimap-background-color: var(--panel);
+  --xy-minimap-mask-background-color: color-mix(in oklch, var(--bg) 70%, transparent);
+  --xy-minimap-node-background-color: var(--line-strong);
+  --xy-controls-button-background-color: var(--panel);
+  --xy-controls-button-background-color-hover: var(--panel-3);
+  --xy-controls-button-color: var(--ink-2);
+  --xy-controls-button-color-hover: var(--ink);
+  --xy-controls-button-border-color: var(--line);
+  --xy-controls-box-shadow: var(--elev-card);
+  --xy-attribution-background-color: transparent;
+}
+.react-flow__controls {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.react-flow__controls-button {
+  width: 28px;
+  height: 28px;
+  padding: 6px;
+}
+.react-flow__controls-button svg {
+  fill: currentColor;
+}
+.react-flow__minimap {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.react-flow__node:focus-visible {
+  outline: none;
+}
+.react-flow__edge.dep-edge path {
+  stroke-dasharray: 4 4;
+}
+.react-flow__edge.dep-edge.is-live path {
+  stroke: var(--run-solid);
+  animation: flow-dash 700ms linear infinite;
+}
+.react-flow__attribution {
+  font-size: 10px;
+  color: var(--ink-4);
+}
+.react-flow__attribution a {
+  color: var(--ink-4);
+}
+.react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+}

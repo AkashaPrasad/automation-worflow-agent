@@ -1,0 +1,13 @@
+# Installed to /etc/caddy/Caddyfile. Caddy obtains and renews the Let's Encrypt cert automatically
+# (needs a DNS-only A record for the host and ports 80/443 open).
+api.aiml.spacesdrive.cc {
+	reverse_proxy 127.0.0.1:8000 {
+		# SSE-friendly: never buffer streamed responses
+		flush_interval -1
+	}
+	# no `encode`: compression can delay text/event-stream frames
+	log {
+		output stdout
+		format console
+	}
+}

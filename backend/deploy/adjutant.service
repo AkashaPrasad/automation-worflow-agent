@@ -1,0 +1,28 @@
+[Unit]
+Description=Adjutant backend (FastAPI, single worker: in-process event bus)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=adjutant
+Group=adjutant
+WorkingDirectory=/opt/adjutant/backend
+Environment=HOME=/home/adjutant
+Environment=UV_CACHE_DIR=/home/adjutant/.cache/uv
+Environment=DATABASE_PATH=/var/lib/adjutant/adjutant.db
+Environment=PUBLIC_BASE_URL=https://api.aiml.spacesdrive.cc
+Environment=FRONTEND_URL=https://aiml.spacesdrive.cc
+Environment=CORS_ORIGINS=https://aiml.spacesdrive.cc,https://adjutant-aiml.pages.dev
+EnvironmentFile=/etc/adjutant/env
+ExecStart=/usr/local/bin/uv run --frozen --no-dev uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
