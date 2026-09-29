@@ -119,7 +119,8 @@ class AdjutantOrchestrator:
         unknown = (set(decisions or {}) | set(edits or {})) - known
         if unknown:
             raise ValueError(f"unknown node ids in decisions/edits: {sorted(unknown)}")
-        self._busy_guard(ctx)
+        # No "busy" check: the task that requested this approval may still be flushing its last events; the
+        # next phase task is chained behind it (see _spawn), and that task no longer touches the plan.
         self.gatekeeper.apply_decisions(ctx, approval, dict(decisions or {}), dict(edits or {}))
         approval.note = note or approval.note
         self.svc.store.save_approval(approval)
@@ -264,11 +265,6 @@ class AdjutantOrchestrator:
         ctx.hydrate()
         self._contexts[run_id] = ctx
         return ctx
-
-    def _busy_guard(self, ctx: RunContext) -> None:
-        task = self._tasks.get(ctx.run.id)
-        if task is not None and not task.done():
-            raise InvalidRunState("the run is still busy; try again in a moment")
 
     def _slot(self) -> asyncio.Semaphore:
         if self._slots is None:

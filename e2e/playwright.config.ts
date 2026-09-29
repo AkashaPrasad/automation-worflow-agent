@@ -19,5 +19,12 @@ export default defineConfig({
     actionTimeout: 20_000,
     navigationTimeout: 30_000,
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [{
+    name: 'chromium',
+    use: {
+      ...devices['Desktop Chrome'],
+      // Optional: E2E_HOST_RULES="MAP host ip" pins DNS (e.g. when a local resolver caches a stale NXDOMAIN).
+      launchOptions: process.env.E2E_HOST_RULES ? { args: [`--host-resolver-rules=${process.env.E2E_HOST_RULES}`] } : {},
+    },
+  }],
 });

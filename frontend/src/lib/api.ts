@@ -34,7 +34,7 @@ export function workspaceId(): string {
   if (cachedWorkspace) return cachedWorkspace;
   try {
     const existing = localStorage.getItem(WS_KEY);
-    if (existing && /^[0-9a-f-]{36}$/i.test(existing)) {
+    if (existing && /^[A-Za-z0-9-]{8,64}$/.test(existing)) { // same rule the API enforces
       cachedWorkspace = existing;
       return existing;
     }

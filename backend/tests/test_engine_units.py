@@ -217,17 +217,17 @@ def test_untrusted_texts_split_per_record():
 
 
 @pytest.mark.parametrize("cause,judge,history,expected", [
-    (ErrorKind.TRANSIENT, RecoveryStrategy.RETRY_SAME, dict(attempts=1), RecoveryStrategy.RETRY_SAME),
-    (ErrorKind.TRANSIENT, RecoveryStrategy.RETRY_SAME, dict(attempts=3), RecoveryStrategy.ASK_HUMAN),
-    (ErrorKind.TRANSIENT, RecoveryStrategy.RETRY_SAME, dict(attempts=3, optional=True), RecoveryStrategy.SKIP),
-    (ErrorKind.INVALID_ARGS, RecoveryStrategy.REPAIR_ARGS, dict(), RecoveryStrategy.REPAIR_ARGS),
-    (ErrorKind.INVALID_ARGS, RecoveryStrategy.REPAIR_ARGS, dict(repairs=2), RecoveryStrategy.ASK_HUMAN),
-    (ErrorKind.NOT_FOUND, RecoveryStrategy.REPLAN, dict(), RecoveryStrategy.REPLAN),
-    (ErrorKind.NOT_FOUND, RecoveryStrategy.SWITCH_TOOL, dict(alternatives=["docs.search"]), RecoveryStrategy.SWITCH_TOOL),
-    (ErrorKind.PRECONDITION, RecoveryStrategy.REPLAN, dict(replans_left=False), RecoveryStrategy.ASK_HUMAN),
-    (ErrorKind.AUTH, RecoveryStrategy.RETRY_SAME, dict(), RecoveryStrategy.ASK_HUMAN),  # code overrides Jev
-    (ErrorKind.PERMISSION, RecoveryStrategy.ASK_HUMAN, dict(optional=True), RecoveryStrategy.SKIP),
-    (ErrorKind.UNKNOWN, RecoveryStrategy.ABORT, dict(), RecoveryStrategy.ABORT),
+    (ErrorKind.TRANSIENT, RecoveryStrategy.RETRY_SAME, {"attempts": 1}, RecoveryStrategy.RETRY_SAME),
+    (ErrorKind.TRANSIENT, RecoveryStrategy.RETRY_SAME, {"attempts": 3}, RecoveryStrategy.ASK_HUMAN),
+    (ErrorKind.TRANSIENT, RecoveryStrategy.RETRY_SAME, {"attempts": 3, "optional": True}, RecoveryStrategy.SKIP),
+    (ErrorKind.INVALID_ARGS, RecoveryStrategy.REPAIR_ARGS, {}, RecoveryStrategy.REPAIR_ARGS),
+    (ErrorKind.INVALID_ARGS, RecoveryStrategy.REPAIR_ARGS, {"repairs": 2}, RecoveryStrategy.ASK_HUMAN),
+    (ErrorKind.NOT_FOUND, RecoveryStrategy.REPLAN, {}, RecoveryStrategy.REPLAN),
+    (ErrorKind.NOT_FOUND, RecoveryStrategy.SWITCH_TOOL, {"alternatives": ["docs.search"]}, RecoveryStrategy.SWITCH_TOOL),
+    (ErrorKind.PRECONDITION, RecoveryStrategy.REPLAN, {"replans_left": False}, RecoveryStrategy.ASK_HUMAN),
+    (ErrorKind.AUTH, RecoveryStrategy.RETRY_SAME, {}, RecoveryStrategy.ASK_HUMAN),  # code overrides Jev
+    (ErrorKind.PERMISSION, RecoveryStrategy.ASK_HUMAN, {"optional": True}, RecoveryStrategy.SKIP),
+    (ErrorKind.UNKNOWN, RecoveryStrategy.ABORT, {}, RecoveryStrategy.ABORT),
 ])
 def test_recovery_policy(cause, judge, history, expected):
     h = StepHistory(**{"attempts": 1, "repairs": 0, "optional": False, "alternatives": [], "replans_left": True,

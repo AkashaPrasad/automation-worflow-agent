@@ -16,7 +16,7 @@ from ..core.models import (
     Verdict,
 )
 from .context import RunContext, Services
-from .errors import BudgetExceeded, EngineFailure, RunInterrupted
+from .errors import BudgetExceeded, Cancelled, EngineFailure, RunInterrupted
 from .plan import SETTLED_STATUSES, plan_outline
 from .planner import Planner
 from .util import similarity, truncate
@@ -61,6 +61,8 @@ class Finisher:
         ctx.set_status(RunStatus.COMPLETED)
 
     async def fail(self, ctx: RunContext, error: str, *, use_llm: bool = True) -> None:
+        if ctx.cancel_requested:
+            raise Cancelled()  # the user's cancel wins over whatever went wrong meanwhile
         ctx.run.error = truncate(error, 1000)
         ctx.run.summary = await self._summary(ctx, outcome=f"failed: {error}") if use_llm else \
             self.fallback_summary(ctx, outcome=f"Stopped: {error}")

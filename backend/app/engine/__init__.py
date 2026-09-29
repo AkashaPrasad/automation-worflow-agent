@@ -22,6 +22,11 @@ Module map:
     recovery      failure classification → code policy → strategy
     verify        proof-of-done per goal, reflection, bounded re-plan
     completion    final report, memories, terminal status
+    context       per-run state: persistence, budget, kill switch, trace sink, hash-bound approvals
+    events        ordered event publication and agent-lane attribution
+    argschema     light JSON-Schema checks and safe coercions for tool args
+    timeutil      dates resolved in code for the planner
+    errors, util  API-facing errors / control-flow signals; trimming and redaction helpers
 """
 from .context import EngineConfig
 from .errors import ApprovalNotFound, InvalidRunState, RunNotFound
