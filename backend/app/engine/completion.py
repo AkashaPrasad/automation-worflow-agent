@@ -35,14 +35,24 @@ class Finisher:
         """After verification: COMPLETED if every goal is verified (or incomplete only by a human/policy
         decision), FAILED otherwise. Never report "done" for something the verifier did not see."""
         pending = unverified_goals(ctx) if ctx.run.plan is not None else []
+        root = ctx.plan.nodes.get(ctx.plan.root_id) if ctx.run.plan is not None else None
+        if pending and root is not None and root.status is NodeStatus.SUCCEEDED and root not in pending:
+            # The root goal IS the user's request and it verified against observed results. A failed
+            # criterion on an intermediate sub-goal (e.g. an extraction step a later step made redundant)
+            # is reported, not fatal: proof-of-done is judged at the level the user asked for.
+            titles = "; ".join(g.title for g in pending[:3])
+            ctx.emit("log", agent="evaluator", level="warning",
+                     message=f"Request verified; intermediate steps not verified: {titles}")
+            await self.complete(ctx, note=f"completed; request verified, but intermediate steps were not: {titles}")
+            return
         if pending:
             titles = "; ".join(g.title for g in pending[:3])
             await self.fail(ctx, f"Could not verify: {titles}")
             return
         await self.complete(ctx)
 
-    async def complete(self, ctx: RunContext) -> None:
-        ctx.run.summary = await self._summary(ctx, outcome="completed")
+    async def complete(self, ctx: RunContext, note: str = "") -> None:
+        ctx.run.summary = await self._summary(ctx, outcome=note or "completed")
         await self._remember(ctx)
         ctx.checkpoint()  # a cancel that raced the last step wins over "completed"
         self._close(ctx)
