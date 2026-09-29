@@ -56,7 +56,12 @@ export function runIdFromUrl(page: Page): string {
 }
 
 export async function getRun(api: APIRequestContext, runId: string): Promise<any> {
-  const r = await api.get(`/api/runs/${runId}`);
+  // Tolerate brief 5xx (e.g. a backend restart during a deploy); the run itself survives restarts.
+  let r = await api.get(`/api/runs/${runId}`);
+  for (let i = 0; i < 6 && r.status() >= 500; i++) {
+    await new Promise((res) => setTimeout(res, 5_000));
+    r = await api.get(`/api/runs/${runId}`);
+  }
   expect(r.ok(), `GET run ${runId}: ${r.status()}`).toBeTruthy();
   return r.json();
 }
