@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import random
 import re
 import time
 from collections.abc import Callable
@@ -134,7 +135,9 @@ class MuseClient:
             }
 
         last_err: Exception | None = None
-        for attempt in range(4):
+        # Contributor tier is capacity-constrained (100 RPM, occasional 503 service_overloaded):
+        # retry patiently with jittered exponential backoff, honouring Retry-After (~2 min budget).
+        for attempt in range(8):
             try:
                 async with self._sem:
                     resp = await client.chat.completions.create(**kwargs)
@@ -152,7 +155,15 @@ class MuseClient:
                     ]
                     continue
                 if status in (429, 500, 502, 503, 504, 529) or status is None:
-                    await asyncio.sleep(min(2**attempt, 8))
+                    retry_after = None
+                    try:
+                        retry_after = float(getattr(getattr(e, "response", None), "headers", {}).get("retry-after"))
+                    except (TypeError, ValueError):
+                        pass
+                    delay = retry_after if retry_after else min(2 ** attempt, 30) * (0.5 + random.random())
+                    emit_trace("llm.retry", {"purpose": purpose, "attempt": attempt + 1, "status": status,
+                                             "delay_s": round(delay, 1)})
+                    await asyncio.sleep(delay)
                     continue
                 raise LLMUnavailable(f"Muse call failed ({status}): {msg[:300]}") from e
         else:

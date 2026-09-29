@@ -22,15 +22,15 @@ class Purpose:
     max_tokens: int  # includes reasoning tokens on a reasoning model, hence generous
 
 
-INTENT = Purpose("intent", "low", 4000)
-CLARIFY = Purpose("clarify", "low", 1500)
-PLAN = Purpose("plan", "high", 24000)
-PLAN_REPAIR = Purpose("plan_repair", "medium", 16000)
+INTENT = Purpose("intent", "minimal", 4000)
+CLARIFY = Purpose("clarify", "minimal", 1500)
+PLAN = Purpose("plan", "medium", 24000)
+PLAN_REPAIR = Purpose("plan_repair", "low", 16000)
 REPLAN = Purpose("replan", "medium", 16000)
-REFLECT = Purpose("reflect", "medium", 4000)
-REPAIR_ARGS = Purpose("repair_args", "low", 4000)
-SUMMARY = Purpose("summary", "low", 4000)
-MEMORY = Purpose("memory", "low", 4000)
+REFLECT = Purpose("reflect", "low", 4000)
+REPAIR_ARGS = Purpose("repair_args", "minimal", 4000)
+SUMMARY = Purpose("summary", "minimal", 4000)
+MEMORY = Purpose("memory", "minimal", 4000)
 
 #: purposes that belong to the planner lane; everything else Muse does (arg repair, llm.* tools) is executor work
 PLANNER_PURPOSES = frozenset({INTENT.name, CLARIFY.name, PLAN.name, PLAN_REPAIR.name, REPLAN.name, REFLECT.name,

@@ -489,9 +489,12 @@ async def test_llm_tools(reg, fake_llm):
     assert r.error.kind == ErrorKind.INVALID_ARGS
 
 
-async def test_llm_tools_error_mapping(reg):
+async def test_llm_tools_error_mapping(reg, monkeypatch):
     muse.set_fake_responder(None)
-    r = await T(reg, "llm.draft").run({"instruction": "x"}, ctx())  # no API key configured in tests
+    llm = muse.get_llm()
+    monkeypatch.setattr(llm.settings, "model_api_key", "")  # simulate a missing key even when .env has one
+    monkeypatch.setattr(llm, "_client", None)
+    r = await T(reg, "llm.draft").run({"instruction": "x"}, ctx())
     assert not r.ok and r.error.kind in (ErrorKind.AUTH, ErrorKind.TRANSIENT)
 
 
