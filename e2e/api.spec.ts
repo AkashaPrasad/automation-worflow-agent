@@ -20,7 +20,7 @@ test.describe('api', () => {
     const r = await api.get('/api/config');
     expect(r.ok()).toBeTruthy();
     const cfg = await r.json();
-    expect(cfg.autonomy_levels).toEqual(expect.arrayContaining(['cautious', 'balanced', 'autonomous']));
+    expect(cfg.autonomy_levels.map((l: { id: string }) => l.id)).toEqual(expect.arrayContaining(['cautious', 'balanced', 'autonomous']));
     expect(cfg).toHaveProperty('policy');
     expect(Array.isArray(cfg.integrations)).toBe(true);
     expect(cfg).toHaveProperty('budget_defaults');
