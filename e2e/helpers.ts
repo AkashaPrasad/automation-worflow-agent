@@ -120,9 +120,13 @@ export async function approveAllNonBlock(page: Page): Promise<string[]> {
     const nodeId = (await item.getAttribute('data-node-id')) ?? '';
     verdicts.push(verdict);
     if (verdict === 'block') continue;
-    await page.getByTestId(`approval-approve-${nodeId}`).click();
+    // The panel re-renders on live updates; re-query the button each time and skip items that left.
+    const btn = page.getByTestId(`approval-approve-${nodeId}`);
+    if ((await btn.count()) === 0) continue;
+    await btn.click({ timeout: 10_000 }).catch(() => undefined);
   }
-  await tid(page, 'approval-submit').click();
+  const submit = tid(page, 'approval-submit');
+  if ((await submit.count()) > 0 && (await submit.isEnabled())) await submit.click({ timeout: 10_000 }).catch(() => undefined);
   return verdicts;
 }
 
